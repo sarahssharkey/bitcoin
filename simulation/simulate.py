@@ -1,14 +1,9 @@
 from __future__ import print_function
 from bitcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
-import argparse
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--instance_num', help='Instance number')
-instance_num = parser.parse_args().instance_num
 
 rpc_port = 18443
 rpc_user = 'bitcoinrpc'
-rpc_password = 'sharkpass' + instance_num
+rpc_password = 'sharkpass'
 
 rpc_connection = AuthServiceProxy("http://{}:{}@127.0.0.1:{}".format(rpc_user, rpc_password, rpc_port))
 best_block_hash = rpc_connection.getbestblockhash()
