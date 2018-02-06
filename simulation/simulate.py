@@ -6,7 +6,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--instance_num', help='Instance number')
 instance_num = parser.parse_args().instance_num
 
-rpc_port = 18444
+rpc_port = 18443
 rpc_user = 'bitcoinrpc'
 rpc_password = 'sharkpass' + instance_num
 
