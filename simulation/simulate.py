@@ -1,5 +1,5 @@
 from __future__ import print_function
-from bitcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
+from bitcoinrpc.authproxy import AuthServiceProxy
 
 rpc_port = 18443
 rpc_user = 'bitcoinrpc'
