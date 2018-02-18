@@ -120,3 +120,4 @@ contrib/devtools/split-debug.sh
 db4/
 
 .idea/
+CMakeLists.txt
