@@ -121,3 +121,4 @@ db4/
 
 .idea/
 CMakeLists.txt
+cmake-build-debug/
