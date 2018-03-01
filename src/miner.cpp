@@ -105,7 +105,7 @@ void BlockAssembler::resetBlock()
     nFees = 0;
 }
 
-std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& scriptPubKeyIn, bool fMineWitnessTx)
+std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& scriptPubKeyIn, int chainIndex, bool fMineWitnessTx)
 {
     int64_t nTimeStart = GetTimeMicros();
 

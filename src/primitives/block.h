@@ -23,6 +23,7 @@ public:
     // header
     int32_t nVersion;
     uint256 hashPrevBlock;
+    uint256 hashPrevNextChainBlock;
     uint256 hashMerkleRoot;
     uint32_t nTime;
     uint32_t nBits;
@@ -39,6 +40,7 @@ public:
     inline void SerializationOp(Stream& s, Operation ser_action) {
         READWRITE(this->nVersion);
         READWRITE(hashPrevBlock);
+        READWRITE(hashPrevNextChainBlock);
         READWRITE(hashMerkleRoot);
         READWRITE(nTime);
         READWRITE(nBits);
@@ -49,6 +51,7 @@ public:
     {
         nVersion = 0;
         hashPrevBlock.SetNull();
+        hashPrevNextChainBlock.SetNull();
         hashMerkleRoot.SetNull();
         nTime = 0;
         nBits = 0;
@@ -109,6 +112,7 @@ public:
         CBlockHeader block;
         block.nVersion       = nVersion;
         block.hashPrevBlock  = hashPrevBlock;
+        block.hashPrevNextChainBlock = hashPrevNextChainBlock;
         block.hashMerkleRoot = hashMerkleRoot;
         block.nTime          = nTime;
         block.nBits          = nBits;
