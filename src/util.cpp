@@ -594,7 +594,7 @@ const int64_t GetChainIndex()
     int64_t chainIndex = 1;
 
     if (gArgs.IsArgSet("-chainIndex")) {
-        chainIndex = gArgs.GetArg("-chainIndex", 0)
+        chainIndex = gArgs.GetArg("-chainIndex", 0);
         return chainIndex;
     }
     return chainIndex;
@@ -607,7 +607,7 @@ const int64_t GetNumChains()
     int64_t numChains = 1;
 
     if (gArgs.IsArgSet("-numChains")) {
-        numChains = gArgs.GetArg("-numChains", 1)
+        numChains = gArgs.GetArg("-numChains", 1);
         return numChains;
     }
     return numChains;
@@ -620,7 +620,7 @@ const int64_t GetNextChainRpcPort ()
     int64_t rpcPort = 1;
 
     if (gArgs.IsArgSet("-rpcPort")) {
-        rpcPort = gArgs.GetArg("-rpcPort", 1)
+        rpcPort = gArgs.GetArg("-rpcPort", 1);
         return rpcPort;
     }
     return rpcPort;
@@ -911,7 +911,7 @@ std::string runCommandWithResult(const char* cmd) {
 }
 
 int numDigits(int n) {
-    in numDigits = 0;
+    int numDigits = 0;
     do {
      ++numDigits;
      n /= 10;

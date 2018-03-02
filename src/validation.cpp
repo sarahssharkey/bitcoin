@@ -3250,8 +3250,8 @@ bool CChainState::AcceptBlockHeader(const CBlockHeader& block, CValidationState&
         int64_t nextChainIndex = (chainIndex + 1) % GetNumChains();
         int64_t nextChainRpcPort = GetNextChainRpcPort();
         char cmd[95 + numDigits(nextChainRpcPort) + numDigits(nextChainIndex) + numDigits(blockNum-1)];
-        int n = sprintf(cmd, ".src/bitcoin-cli -regtest -rpcport=%d -datadir=/home/sarahsharkey/.bitcoin/regtest/%d getblockhash %d", nextChainRpcPort, nextChainIndex, blockNum-1);
-        std::string blockHashString = runCommandWithResult(cmd);
+        sprintf(cmd, ".src/bitcoin-cli -regtest -rpcport=%d -datadir=/home/sarahsharkey/.bitcoin/regtest/%d getblockhash %d", nextChainRpcPort, nextChainIndex, blockNum-1);
+        std::string blockHash = runCommandWithResult(cmd);
         if (blockHash.compare(block.hashPrevNextChainBlock.ToString()) != 0) {
             return state.Invalid(error("%s: block %s is marked invalid", __func__, hash.ToString()), 0, "invalid hashPrevNextChainBlock");
         }

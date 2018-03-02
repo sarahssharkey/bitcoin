@@ -176,6 +176,9 @@ public:
     //! pointer to the index of the predecessor of this block
     CBlockIndex* pprev;
 
+    //! pointer to the index of the predecessor of this block in the next chain
+    CBlockIndex* pNextChainPrev;
+
     //! pointer to the index of some further predecessor of this block
     CBlockIndex* pskip;
 
@@ -212,6 +215,8 @@ public:
     uint32_t nTime;
     uint32_t nBits;
     uint32_t nNonce;
+    uint32_t blockNum;
+
 
     //! (memory only) Sequential id assigned to distinguish order in which blocks are received.
     int32_t nSequenceId;
@@ -223,6 +228,7 @@ public:
     {
         phashBlock = nullptr;
         pprev = nullptr;
+        pNextChainPrev = nullptr;
         pskip = nullptr;
         nHeight = 0;
         nFile = 0;
@@ -234,6 +240,7 @@ public:
         nStatus = 0;
         nSequenceId = 0;
         nTimeMax = 0;
+        blockNum = 0;
 
         nVersion       = 0;
         hashMerkleRoot = uint256();
@@ -256,6 +263,7 @@ public:
         nTime          = block.nTime;
         nBits          = block.nBits;
         nNonce         = block.nNonce;
+        blockNum       = block.blockNum;
     }
 
     CDiskBlockPos GetBlockPos() const {
@@ -282,10 +290,13 @@ public:
         block.nVersion       = nVersion;
         if (pprev)
             block.hashPrevBlock = pprev->GetBlockHash();
+        if (pNextChainPrev)
+            bloch.hashPrevNextChainBlock = pNextChainPrev->GetBlockHash();
         block.hashMerkleRoot = hashMerkleRoot;
         block.nTime          = nTime;
         block.nBits          = nBits;
         block.nNonce         = nNonce;
+        block.blockNum       = blockNum;
         return block;
     }
 
@@ -322,8 +333,8 @@ public:
 
     std::string ToString() const
     {
-        return strprintf("CBlockIndex(pprev=%p, nHeight=%d, merkle=%s, hashBlock=%s)",
-            pprev, nHeight,
+        return strprintf("CBlockIndex(pprev=%p, pNextChainPrev=%p, nHeight=%d, merkle=%s, hashBlock=%s)",
+            pprev, pNextChainPrev, nHeight,
             hashMerkleRoot.ToString(),
             GetBlockHash().ToString());
     }
@@ -371,13 +382,16 @@ class CDiskBlockIndex : public CBlockIndex
 {
 public:
     uint256 hashPrev;
+    uint256 hashNextChainPrev;
 
     CDiskBlockIndex() {
         hashPrev = uint256();
+        hashNextChainPrev = uint256();
     }
 
     explicit CDiskBlockIndex(const CBlockIndex* pindex) : CBlockIndex(*pindex) {
         hashPrev = (pprev ? pprev->GetBlockHash() : uint256());
+        hashNextChainPrev = (pNextChainPrev ? pNextChainPrev->GetBlockHash() : uint256());
     }
 
     ADD_SERIALIZE_METHODS;
@@ -401,10 +415,12 @@ public:
         // block header
         READWRITE(this->nVersion);
         READWRITE(hashPrev);
+        READWRITE(hashNextChainPrev);
         READWRITE(hashMerkleRoot);
         READWRITE(nTime);
         READWRITE(nBits);
         READWRITE(nNonce);
+        READWRITE(blockNum);
     }
 
     uint256 GetBlockHash() const
@@ -412,10 +428,12 @@ public:
         CBlockHeader block;
         block.nVersion        = nVersion;
         block.hashPrevBlock   = hashPrev;
+        block.hashPrevNextChainBlock = hashNextChainPrev;
         block.hashMerkleRoot  = hashMerkleRoot;
         block.nTime           = nTime;
         block.nBits           = nBits;
         block.nNonce          = nNonce;
+        block.blockNum        = blockNum;
         return block.GetHash();
     }
 
@@ -424,9 +442,10 @@ public:
     {
         std::string str = "CDiskBlockIndex(";
         str += CBlockIndex::ToString();
-        str += strprintf("\n                hashBlock=%s, hashPrev=%s)",
+        str += strprintf("\n                hashBlock=%s, hashPrev=%s, hashNextChainPrev=%s)",
             GetBlockHash().ToString(),
-            hashPrev.ToString());
+            hashPrev.ToString(),
+            hashNextChainPrev.ToString());
         return str;
     }
 };
