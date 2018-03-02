@@ -24,8 +24,10 @@ for i in range(0, num_chains):
     rpc_port = current_port
     port = current_port + 1
     chains.append({'rpcport': rpc_port, 'port': port, 'data_dir': data_dir})
-    os.system('mkdir {}'.format(data_dir))
-    os.system('mkdir {}/regtest'.format(data_dir))
+    if not os.path.isdir(data_dir):
+        os.system('mkdir {}'.format(data_dir))
+        if not os.path.isdir('{}/regtest'.format(data_dir)):
+            os.system('mkdir {}/regtest'.format(data_dir))
     conf_info = 'rpcuser=sarah\nrpcpassword=password\nrpcport={rpcport}\nport={port}'.format(rpcport=rpc_port,
                                                                                              port=port)
     f = open('{}/regtest/bitcoin.conf'.format(data_dir), 'w+')
@@ -45,4 +47,3 @@ for chain in chains:
         chain['rpc_port'],
         chain['data_dir'],
     ))
-    
