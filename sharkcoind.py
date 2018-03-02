@@ -8,8 +8,6 @@ parser = ArgumentParser()
 parser.add_argument('num_chains', type=int, help='number of subchains')
 args = parser.parse_args()
 num_chains = args.num_chains
-start = args.start
-end = args.end
 
 if num_chains > 20:
     sys.exit("too many chains, max 20")
@@ -47,3 +45,4 @@ for chain in chains:
         chain['rpc_port'],
         chain['data_dir'],
     ))
+    
