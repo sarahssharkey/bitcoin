@@ -291,7 +291,7 @@ public:
         if (pprev)
             block.hashPrevBlock = pprev->GetBlockHash();
         if (pNextChainPrev)
-            bloch.hashPrevNextChainBlock = pNextChainPrev->GetBlockHash();
+            block.hashPrevNextChainBlock = pNextChainPrev->GetBlockHash();
         block.hashMerkleRoot = hashMerkleRoot;
         block.nTime          = nTime;
         block.nBits          = nBits;

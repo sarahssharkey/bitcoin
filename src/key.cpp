@@ -4,6 +4,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <key.h>
+#include <iostream>
 
 #include <arith_uint256.h>
 #include <crypto/common.h>
@@ -321,6 +322,8 @@ bool ECC_InitSanityCheck() {
 }
 
 void ECC_Start() {
+    std::cout << secp256k1_context_sign;
+    std::cout << std::endl;
     assert(secp256k1_context_sign == nullptr);
 
     secp256k1_context *ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN);
