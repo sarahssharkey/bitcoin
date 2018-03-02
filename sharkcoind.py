@@ -1,28 +1,30 @@
 from argparse import ArgumentParser
-import subprocess
+import os
 import sys
 
 parser = ArgumentParser()
-parser.add_argument('num_chains', help='number of subchains')
+parser.add_argument('num_chains', type=int, help='number of subchains')
 args = parser.parse_args()
-num_chains = parser.num_chains
+num_chains = args.num_chains
 
 if num_chains > 20:
     sys.exit("too many chains, max 20")
 
 current_port = 3776
-
+home_dir = os.environ['HOME']
 chains = []
 
 for i in range(0, num_chains):
-    home_dir = subprocess.check_output('echo $HOME')
-    data_dir = '{home}/.bitcoin/regtest/{index}'.format(home=home_dir, index=i)
-    rpcport = current_port
+    data_dir = '{home}/.sharkcoin/regtest/{index}'.format(home=home_dir, index=i)
+    rpc_port = current_port
     port = current_port + 1
-    chains.append({'rpcport': rpcport, 'port': port, 'data_dir': data_dir})
-    subprocess.run(['mkdir', data_dir])
-    conf_info = 'rpcuser=sarah\nrpcpassword=password\nrpcport={rpcport}\nport={port}'.format(rpcport=rpcport, port=port)
+    chains.append({'rpcport': rpc_port, 'port': port, 'data_dir': data_dir})
+    os.system('mkdir {}'.format(data_dir))
+    conf_info = 'rpcuser=sarah\nrpcpassword=password\nrpcport={rpcport}\nport={port}'.format(rpcport=rpc_port,
+                                                                                             port=port)
+    f = open('{}/bitcoin.conf'.format(data_dir), 'w+')
+    f.write(conf_info)
+    f.close()
+    os.system('./src/bitcoind -daemon -regtest -rpcport={} -data_dir={}'.format(rpc_port, data_dir))
     current_port += 2
-    subprocess.run(['echo', conf_info, '>{}/bitcoin.conf'.format(data_dir)])
-    subprocess.run(
-        ['./src/bitcoind', '-daemon', '-regtest', '-rpcport={}'.format(rpcport), '-data_dir={}'.format(data_dir)])
+
