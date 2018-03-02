@@ -23,10 +23,12 @@ public:
     // header
     int32_t nVersion;
     uint256 hashPrevBlock;
+    uint256 hashPrevNextChainBlock;
     uint256 hashMerkleRoot;
     uint32_t nTime;
     uint32_t nBits;
     uint32_t nNonce;
+    uint32_t blockNum;
 
     CBlockHeader()
     {
@@ -39,20 +41,24 @@ public:
     inline void SerializationOp(Stream& s, Operation ser_action) {
         READWRITE(this->nVersion);
         READWRITE(hashPrevBlock);
+        READWRITE(hashPrevNextChainBlock);
         READWRITE(hashMerkleRoot);
         READWRITE(nTime);
         READWRITE(nBits);
         READWRITE(nNonce);
+        READWRITE(blockNum);
     }
 
     void SetNull()
     {
         nVersion = 0;
         hashPrevBlock.SetNull();
+        hashPrevNextChainBlock.SetNull();
         hashMerkleRoot.SetNull();
         nTime = 0;
         nBits = 0;
         nNonce = 0;
+        blockNum = 0;
     }
 
     bool IsNull() const
@@ -109,10 +115,12 @@ public:
         CBlockHeader block;
         block.nVersion       = nVersion;
         block.hashPrevBlock  = hashPrevBlock;
+        block.hashPrevNextChainBlock = hashPrevNextChainBlock;
         block.hashMerkleRoot = hashMerkleRoot;
         block.nTime          = nTime;
         block.nBits          = nBits;
         block.nNonce         = nNonce;
+        block.blockNum       = blockNum;
         return block;
     }
 

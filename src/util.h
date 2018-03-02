@@ -177,6 +177,9 @@ bool LockDirectory(const fs::path& directory, const std::string lockfile_name, b
 bool TryCreateDirectories(const fs::path& p);
 fs::path GetDefaultDataDir();
 const fs::path &GetDataDir(bool fNetSpecific = true);
+const int64_t GetChainIndex();
+const int64_t GetNumChains();
+const int64_t GetNextChainRpcPort();
 void ClearDatadirCache();
 fs::path GetConfigFile(const std::string& confPath);
 #ifndef WIN32
@@ -190,6 +193,8 @@ fs::path GetDebugLogPath();
 bool OpenDebugLog();
 void ShrinkDebugFile();
 void runCommand(const std::string& strCommand);
+std::string runCommandWithResult(const char* cmd);
+int numDigits(int n);
 
 inline bool IsSwitchChar(char c)
 {

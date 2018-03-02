@@ -11,6 +11,11 @@
 #include <utilstrencodings.h>
 
 #include <stdarg.h>
+#include <cstdio>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <array>
 
 #if (defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__DragonFly__))
 #include <pthread.h>
@@ -582,6 +587,45 @@ static fs::path pathCached;
 static fs::path pathCachedNetSpecific;
 static CCriticalSection csPathCached;
 
+const int64_t GetChainIndex()
+{
+    LOCK(csPathCached);
+
+    int64_t chainIndex = 1;
+
+    if (gArgs.IsArgSet("-chainIndex")) {
+        chainIndex = gArgs.GetArg("-chainIndex", 0)
+        return chainIndex;
+    }
+    return chainIndex;
+}
+
+const int64_t GetNumChains()
+{
+    LOCK(csPathCached);
+
+    int64_t numChains = 1;
+
+    if (gArgs.IsArgSet("-numChains")) {
+        numChains = gArgs.GetArg("-numChains", 1)
+        return numChains;
+    }
+    return numChains;
+}
+
+const int64_t GetNextChainRpcPort ()
+{
+    LOCK(csPathCached);
+
+    int64_t rpcPort = 1;
+
+    if (gArgs.IsArgSet("-rpcPort")) {
+        rpcPort = gArgs.GetArg("-rpcPort", 1)
+        return rpcPort;
+    }
+    return rpcPort;
+}
+
 const fs::path &GetDataDir(bool fNetSpecific)
 {
 
@@ -852,6 +896,27 @@ void runCommand(const std::string& strCommand)
     int nErr = ::system(strCommand.c_str());
     if (nErr)
         LogPrintf("runCommand error: system(%s) returned %d\n", strCommand, nErr);
+}
+
+std::string runCommandWithResult(const char* cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
+    if (!pipe) throw std::runtime_error("popen() failed!");
+    while (!feof(pipe.get())) {
+        if (fgets(buffer.data(), 128, pipe.get()) != nullptr)
+            result += buffer.data();
+    }
+    return result;
+}
+
+int numDigits(int n) {
+    in numDigits = 0;
+    do {
+     ++numDigits;
+     n /= 10;
+    } while (n);
+    return numDigits;
 }
 
 void RenameThread(const char* name)

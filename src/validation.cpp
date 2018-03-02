@@ -3243,6 +3243,19 @@ bool CChainState::AcceptBlockHeader(const CBlockHeader& block, CValidationState&
         BlockMap::iterator mi = mapBlockIndex.find(block.hashPrevBlock);
         if (mi == mapBlockIndex.end())
             return state.DoS(10, error("%s: prev block not found", __func__), 0, "prev-blk-not-found");
+
+        // Check hashPrevNextChainBlock
+        uint32_t blockNum = block.blockNum;
+        int64_t chainIndex = GetChainIndex();
+        int64_t nextChainIndex = (chainIndex + 1) % GetNumChains();
+        int64_t nextChainRpcPort = GetNextChainRpcPort();
+        char cmd[95 + numDigits(nextChainRpcPort) + numDigits(nextChainIndex) + numDigits(blockNum-1)];
+        int n = sprintf(cmd, ".src/bitcoin-cli -regtest -rpcport=%d -datadir=/home/sarahsharkey/.bitcoin/regtest/%d getblockhash %d", nextChainRpcPort, nextChainIndex, blockNum-1);
+        std::string blockHashString = runCommandWithResult(cmd);
+        if (blockHash.compare(block.hashPrevNextChainBlock.ToString()) != 0) {
+            return state.Invalid(error("%s: block %s is marked invalid", __func__, hash.ToString()), 0, "invalid hashPrevNextChainBlock");
+        }
+
         pindexPrev = (*mi).second;
         if (pindexPrev->nStatus & BLOCK_FAILED_MASK)
             return state.DoS(100, error("%s: prev block invalid", __func__), REJECT_INVALID, "bad-prevblk");
