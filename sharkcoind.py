@@ -2,13 +2,20 @@ from argparse import ArgumentParser
 import os
 import sys
 
+import time
+
 parser = ArgumentParser()
 parser.add_argument('num_chains', type=int, help='number of subchains')
 args = parser.parse_args()
 num_chains = args.num_chains
+start = args.start
+end = args.end
 
 if num_chains > 20:
     sys.exit("too many chains, max 20")
+
+if num_chains < 1:
+    sys.exit("num_chains must be greater than 0")
 
 current_port = 3776
 home_dir = os.environ['HOME']
@@ -28,3 +35,14 @@ for i in range(0, num_chains):
     os.system('./src/bitcoind -daemon -regtest -rpcport={} -data_dir={}'.format(rpc_port, data_dir))
     current_port += 2
 
+while True:
+    try:
+        time.sleep(5)
+    except KeyboardInterrupt:
+        break
+
+for chain in chains:
+    os.system('./src/bitcoin-cli -regtest -rpcport={} -datadir={} stop'.format(
+        chain['rpc_port'],
+        chain['data_dir'],
+    ))
