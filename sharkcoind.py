@@ -43,10 +43,10 @@ def main():
         os.system('./src/bitcoind -daemon -regtest -rpcport={} -port={} -datadir={} -conf={}/bitcoin.conf'.format(rpc_port, port, data_dir, data_dir))
 
     time.sleep(4)
-    setup_genesis(chains)
+    setup_genesis_and_first_blocks(chains)
 
 
-def setup_genesis(chains):
+def setup_genesis_and_first_blocks(chains):
     process = subprocess.Popen(
         [
             './src/bitcoin-cli',
@@ -83,5 +83,12 @@ def setup_genesis(chains):
             chain['conf'],
             hex_data
         ))
+    for chain in chains:
+        os.system('./src/bitcoin-cli -regtest -rpcport={} -datadir={} -conf={} generate 1'.format(
+            chain['rpc_port'],
+            chain['data_dir'],
+            chain['conf'],
+        ))
+        
 
 main()
