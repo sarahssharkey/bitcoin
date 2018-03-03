@@ -2,8 +2,6 @@ from argparse import ArgumentParser
 import os
 import sys
 
-import time
-
 parser = ArgumentParser()
 parser.add_argument('num_chains', type=int, help='number of subchains')
 args = parser.parse_args()
@@ -17,7 +15,6 @@ if num_chains < 1:
 
 current_port = 3776
 home_dir = os.environ['HOME']
-chains = []
 
 for i in range(0, num_chains):
     data_dir = '{home}/.bitcoin/{index}'.format(home=home_dir, index=i)
@@ -29,22 +26,8 @@ for i in range(0, num_chains):
             os.system('mkdir {}/regtest'.format(data_dir))
     conf_info = 'rpcuser=sarah\nrpcpassword=password\nrpcport={rpcport}\nport={port}'.format(rpcport=rpc_port,
                                                                                              port=port)
-    chains.append({'conf': '{}/bitcoin.conf'.format(data_dir), 'rpc_port': rpc_port, 'port': port, 'data_dir': data_dir})
     f = open('{}/bitcoin.conf'.format(data_dir), 'w+')
     f.write(conf_info)
     f.close()
     os.system('./src/bitcoind -daemon -regtest -rpcport={} -port={} -datadir={} -conf={}/bitcoin.conf'.format(rpc_port, port, data_dir, data_dir))
     current_port += 2
-
-while True:
-    try:
-        time.sleep(5)
-    except KeyboardInterrupt:
-        break
-
-for chain in chains:
-    os.system('./src/bitcoin-cli -regtest -rpcport={} -datadir={} -conf={} stop'.format(
-        chain['rpc_port'],
-        chain['data_dir'],
-        chain['conf'],
-    ))
