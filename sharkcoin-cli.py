@@ -13,6 +13,8 @@ args = parser.parse_args()
 action = args.action
 subchain_index = args.subchain_index
 num_chains = args.num_chains
+if subchain_index >= num_chains:
+    sys.exit('subchain index out of range')
 home_dir = os.environ['HOME']
 
 chains = [
@@ -44,6 +46,19 @@ elif action == 'getblock':
         chains[subchain_index]['conf'],
         block_hash,
         args.verbosity
+    ))
+
+elif action == 'getblockheader':
+    if subchain_index == -1:
+        sys.exit('must specify a subchain index with getblockheader')
+    block_hash = args.block_hash
+    if not block_hash:
+        sys.exit('must specify a block hash with getblockheader')
+    os.system('./src/bitcoin-cli -regtest -rpcport={} -datadir={} -conf={} getblockheader {}'.format(
+        chains[subchain_index]['rpc_port'],
+        chains[subchain_index]['data_dir'],
+        chains[subchain_index]['conf'],
+        block_hash,
     ))
 
 elif action == 'generate':
