@@ -3,10 +3,11 @@ from argparse import ArgumentParser
 import os, sys
 
 parser = ArgumentParser()
-parser.add_argument('action', help='action')
 parser.add_argument('num_chains', type=int, help='number of subchains')
+parser.add_argument('action', help='action')
 parser.add_argument('--subchain_index', type=int, default=-1, help='subchain index')
 parser.add_argument('--block_hash', deafult=None, help='block hash')
+parser.add_argument('--verbosity', type=int, default=1, help='0 is hex data, 1 is json')
 parser.add_argument('--nblocks', type=int, default=0, help='number of blocks to generate')
 args = parser.parse_args()
 action = args.action
@@ -37,11 +38,12 @@ elif action == 'getblock':
     block_hash = args.block_hash
     if not block_hash:
         sys.exit('must specify a block hash with getblock')
-    os.system('./src/bitcoin-cli -regtest -rpcport={} -datadir={} -conf={} getblock {}'.format(
+    os.system('./src/bitcoin-cli -regtest -rpcport={} -datadir={} -conf={} getblock {} {}'.format(
         chains[subchain_index]['rpc_port'],
         chains[subchain_index]['data_dir'],
         chains[subchain_index]['conf'],
-        block_hash
+        block_hash,
+        args.verbosity
     ))
 
 elif action == 'generate':
