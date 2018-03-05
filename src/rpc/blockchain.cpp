@@ -84,6 +84,11 @@ double GetDifficulty(const CBlockIndex* blockindex)
     return GetDifficulty(chainActive, blockindex);
 }
 
+int64_t GetNumSubChains()
+{
+    return GetNumChains();
+}
+
 UniValue blockheaderToJSON(const CBlockIndex* blockindex)
 {
     AssertLockHeld(cs_main);

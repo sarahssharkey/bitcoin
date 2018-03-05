@@ -587,11 +587,11 @@ static fs::path pathCached;
 static fs::path pathCachedNetSpecific;
 static CCriticalSection csPathCached;
 
-const int64_t GetChainIndex()
+int64_t GetChainIndex()
 {
     LOCK(csPathCached);
 
-    int64_t chainIndex = 1;
+    int64_t chainIndex = 0;
 
     if (gArgs.IsArgSet("-chainIndex")) {
         chainIndex = gArgs.GetArg("-chainIndex", 0);
@@ -600,7 +600,7 @@ const int64_t GetChainIndex()
     return chainIndex;
 }
 
-const int64_t GetNumChains()
+int64_t GetNumChains()
 {
     LOCK(csPathCached);
 
@@ -613,17 +613,25 @@ const int64_t GetNumChains()
     return numChains;
 }
 
-const int64_t GetNextChainRpcPort ()
+int64_t GetNextChainRpcPort ()
 {
-    LOCK(csPathCached);
-
-    int64_t rpcPort = 1;
-
-    if (gArgs.IsArgSet("-rpcPort")) {
-        rpcPort = gArgs.GetArg("-rpcPort", 1);
-        return rpcPort;
+    int64_t index = GetChainIndex();
+    int64_t numChains = GetNumChains();
+    int port = BaseParams().RPCPort();
+    if (index == numChains - 1)
+    {
+        return 3776;
     }
-    return rpcPort;
+    return 3776 + (index+1)*2;
+}
+
+
+uint256 GetHashPrevNextChainBlock(uint32_t blockNum)
+{
+    char cmd[41 + numDigits(blockNum)];
+    sprintf(cmd, "python3 ../sharkcoin-cli.py getblockhash %d", blockNum);
+    std::string hashString = runCommandWithResult(cmd);
+    return uint256().SetHex(hashString);
 }
 
 const fs::path &GetDataDir(bool fNetSpecific)
