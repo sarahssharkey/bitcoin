@@ -1,9 +1,10 @@
 from argparse import ArgumentParser
 
-import os, sys
+import os
+import subprocess
+import sys
 
 parser = ArgumentParser()
-parser.add_argument('num_chains', type=int, help='number of subchains')
 parser.add_argument('action', help='action')
 parser.add_argument('--subchain_index', type=int, default=-1, help='subchain index')
 parser.add_argument('--block_hash', default=None, help='block hash')
@@ -12,10 +13,21 @@ parser.add_argument('--nblocks', type=int, default=0, help='number of blocks to 
 args = parser.parse_args()
 action = args.action
 subchain_index = args.subchain_index
-num_chains = args.num_chains
-if subchain_index >= num_chains:
-    sys.exit('subchain index out of range')
 home_dir = os.environ['HOME']
+
+process = subprocess.Popen(
+        [
+            './src/bitcoin-cli',
+            '-regtest',
+            '-rpcport=3776',
+            '-datadir={home}/.bitcoin/0'.format(home=home_dir),
+            '-conf={home}/.bitcoin/0/bitcoin.conf'.format(home=home_dir),
+            'getnumsubchains',
+        ], stdout=subprocess.PIPE)
+num_chains_blob, err = process.communicate()
+if err:
+    sys.exit('could not get number of sub chains: {}'.format(str(err)))
+num_chains = int(num_chains_blob)
 
 chains = [
     {

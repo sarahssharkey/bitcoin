@@ -40,7 +40,7 @@ def main():
         f = open('{}/bitcoin.conf'.format(data_dir), 'w+')
         f.write(conf_info)
         f.close()
-        os.system('./src/bitcoind -daemon -regtest -rpcport={} -port={} -datadir={} -conf={}/bitcoin.conf'.format(rpc_port, port, data_dir, data_dir))
+        os.system('./src/bitcoind -daemon -regtest -rpcport={} -port={} -datadir={} -conf={}/bitcoin.conf -numChains={}'.format(rpc_port, port, data_dir, data_dir, num_chains))
 
     time.sleep(4)
     setup_genesis_and_first_blocks(chains)
