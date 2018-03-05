@@ -84,8 +84,16 @@ double GetDifficulty(const CBlockIndex* blockindex)
     return GetDifficulty(chainActive, blockindex);
 }
 
-int64_t GetNumSubChains()
+UniValue getnumsubchains(const JSONRPCRequest& request)
 {
+    if (request.fHelp || request.params.size() != 0)
+        throw std::runtime_error(
+            "getnumsubchains\n"
+            "\nReturns number of sub chains.\n"
+            "\nResult:\n"
+            "n    (numeric) The current block count\n"
+        );
+
     return GetNumChains();
 }
 
