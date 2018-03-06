@@ -84,19 +84,6 @@ double GetDifficulty(const CBlockIndex* blockindex)
     return GetDifficulty(chainActive, blockindex);
 }
 
-UniValue getnumsubchains(const JSONRPCRequest& request)
-{
-    if (request.fHelp || request.params.size() != 0)
-        throw std::runtime_error(
-            "getnumsubchains\n"
-            "\nReturns number of sub chains.\n"
-            "\nResult:\n"
-            "n    (numeric) The current block count\n"
-        );
-
-    return GetNumChains();
-}
-
 UniValue blockheaderToJSON(const CBlockIndex* blockindex)
 {
     AssertLockHeld(cs_main);
@@ -1167,6 +1154,7 @@ UniValue getblockchaininfo(const JSONRPCRequest& request)
             "\nResult:\n"
             "{\n"
             "  \"chain\": \"xxxx\",              (string) current network name as defined in BIP70 (main, test, regtest)\n"
+            "  \"numsubchains\": \"xxxx\",      (numeric) the number of subchains\n"
             "  \"blocks\": xxxxxx,             (numeric) the current number of blocks processed in the server\n"
             "  \"headers\": xxxxxx,            (numeric) the current number of headers we have validated\n"
             "  \"bestblockhash\": \"...\",       (string) the hash of the currently best block\n"
@@ -1216,6 +1204,7 @@ UniValue getblockchaininfo(const JSONRPCRequest& request)
 
     UniValue obj(UniValue::VOBJ);
     obj.push_back(Pair("chain",                 Params().NetworkIDString()));
+    obj.push_back(Pair("numsubchains",          GetNumChains()));
     obj.push_back(Pair("blocks",                (int)chainActive.Height()));
     obj.push_back(Pair("headers",               pindexBestHeader ? pindexBestHeader->nHeight : -1));
     obj.push_back(Pair("bestblockhash",         chainActive.Tip()->GetBlockHash().GetHex()));
@@ -1642,7 +1631,6 @@ static const CRPCCommand commands[] =
     { "blockchain",         "getmempooldescendants",  &getmempooldescendants,  {"txid","verbose"} },
     { "blockchain",         "getmempoolentry",        &getmempoolentry,        {"txid"} },
     { "blockchain",         "getmempoolinfo",         &getmempoolinfo,         {} },
-    { "blockchain",         "getnumsubchains",        &getnumsubchains,        {} },
     { "blockchain",         "getrawmempool",          &getrawmempool,          {"verbose"} },
     { "blockchain",         "gettxout",               &gettxout,               {"txid","n","include_mempool"} },
     { "blockchain",         "gettxoutsetinfo",        &gettxoutsetinfo,        {} },
