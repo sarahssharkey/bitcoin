@@ -5,6 +5,7 @@
 
 #include <chainparams.h>
 #include <consensus/merkle.h>
+#include <iostream>
 
 #include <tinyformat.h>
 #include <util.h>
@@ -315,6 +316,10 @@ public:
 
         genesis = CreateGenesisBlock(1296688602, 2, 0x207fffff, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
+        std::cout << consensus.hashGenesisBlock.ToString();
+        std::cout << std::endl;
+        std::cout << genesis.hashMerkleRoot.ToString();
+        std::cout << std::endl;
         assert(consensus.hashGenesisBlock == uint256S("0x0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206"));
         assert(genesis.hashMerkleRoot == uint256S("0x4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"));
 

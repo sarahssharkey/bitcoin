@@ -617,7 +617,6 @@ int64_t GetNextChainRpcPort ()
 {
     int64_t index = GetChainIndex();
     int64_t numChains = GetNumChains();
-    int port = BaseParams().RPCPort();
     if (index == numChains - 1)
     {
         return 3776;
@@ -626,12 +625,12 @@ int64_t GetNextChainRpcPort ()
 }
 
 
-uint256 GetHashPrevNextChainBlock(uint32_t blockNum)
+std::string GetHashPrevNextChainBlock(uint32_t blockNum)
 {
     char cmd[41 + numDigits(blockNum)];
     sprintf(cmd, "python3 ../sharkcoin-cli.py getblockhash %d", blockNum);
     std::string hashString = runCommandWithResult(cmd);
-    return uint256().SetHex(hashString);
+    return hashString;
 }
 
 const fs::path &GetDataDir(bool fNetSpecific)

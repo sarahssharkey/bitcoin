@@ -15,7 +15,7 @@ args = parser.parse_args()
 action = args.action
 subchain_index = args.subchain_index
 home_dir = os.environ['HOME']
-
+'''
 process = subprocess.Popen(
         [
             './src/bitcoin-cli',
@@ -28,8 +28,12 @@ process = subprocess.Popen(
 info, err = process.communicate()
 if err:
     sys.exit('could not get number of sub chains: {}'.format(str(err)))
+print('info ----------- {}'.format(info))
 blockchain_info = json.loads(info.decode('utf8'))
+print('blockchain info ------ {}'.format(blockchain_info))
 num_chains = int(blockchain_info['numsubchains'])
+'''
+num_chains = 3
 
 chains = [
     {

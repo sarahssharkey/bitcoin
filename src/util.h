@@ -25,6 +25,7 @@
 #include <map>
 #include <stdint.h>
 #include <string>
+#include <uint256.h>
 #include <vector>
 
 #include <boost/signals2/signal.hpp>
@@ -180,6 +181,7 @@ const fs::path &GetDataDir(bool fNetSpecific = true);
 int64_t GetChainIndex();
 int64_t GetNumChains();
 int64_t GetNextChainRpcPort();
+std::string GetHashPrevNextChainBlock(uint32_t blockNum);
 void ClearDatadirCache();
 fs::path GetConfigFile(const std::string& confPath);
 #ifndef WIN32
