@@ -284,7 +284,7 @@ public:
         consensus.BIP34Hash = uint256();
         consensus.BIP65Height = 1351; // BIP65 activated on regtest (Used in rpc activation tests)
         consensus.BIP66Height = 1251; // BIP66 activated on regtest (Used in rpc activation tests)
-        consensus.powLimit = uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+        consensus.powLimit = uint256S("efffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // two weeks
         consensus.nPowTargetSpacing = 10 * 60;
         consensus.fPowAllowMinDifficultyBlocks = true;
@@ -314,13 +314,14 @@ public:
         nDefaultPort = 18444;
         nPruneAfterHeight = 1000;
 
-        genesis = CreateGenesisBlock(1296688602, 2, 0x207fffff, 1, 50 * COIN);
+        genesis = CreateGenesisBlock(1296688602, 2, 0x0, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
         std::cout << consensus.hashGenesisBlock.ToString();
         std::cout << std::endl;
         std::cout << genesis.hashMerkleRoot.ToString();
         std::cout << std::endl;
-        assert(consensus.hashGenesisBlock == uint256S("0xedef1126e84e3edb9be76f7f1576a1dff1bd067c6610bb5b75ed5900bf8ef00b"));
+
+        assert(consensus.hashGenesisBlock == uint256S("0x8d389267e09f2b1ea951598dd950f1e2e91ef9540a97bd2eb8c752b71d975933"));
         assert(genesis.hashMerkleRoot == uint256S("0x4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"));
 
         vFixedSeeds.clear(); //!< Regtest mode doesn't have any fixed seeds.
@@ -332,7 +333,7 @@ public:
 
         checkpointData = {
             {
-                {0, uint256S("0xedef1126e84e3edb9be76f7f1576a1dff1bd067c6610bb5b75ed5900bf8ef00b")},
+                {0, uint256S("0x8d389267e09f2b1ea951598dd950f1e2e91ef9540a97bd2eb8c752b71d975933")},
             }
         };
 
