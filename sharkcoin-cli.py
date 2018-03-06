@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 
+import json
 import os
 import subprocess
 import sys
@@ -22,12 +23,13 @@ process = subprocess.Popen(
             '-rpcport=3776',
             '-datadir={home}/.bitcoin/0'.format(home=home_dir),
             '-conf={home}/.bitcoin/0/bitcoin.conf'.format(home=home_dir),
-            'getnumsubchains',
+            'getblockchaininfo',
         ], stdout=subprocess.PIPE)
-num_chains_blob, err = process.communicate()
+info, err = process.communicate()
 if err:
     sys.exit('could not get number of sub chains: {}'.format(str(err)))
-num_chains = int(num_chains_blob)
+blockchain_info = json.loads(info.decode('utf8'))
+num_chains = int(blockchain_info['numsubchains'])
 
 chains = [
     {
