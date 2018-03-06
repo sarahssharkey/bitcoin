@@ -320,7 +320,7 @@ public:
         std::cout << std::endl;
         std::cout << genesis.hashMerkleRoot.ToString();
         std::cout << std::endl;
-        assert(consensus.hashGenesisBlock == uint256S("0x0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206"));
+        assert(consensus.hashGenesisBlock == uint256S("0xedef1126e84e3edb9be76f7f1576a1dff1bd067c6610bb5b75ed5900bf8ef00b"));
         assert(genesis.hashMerkleRoot == uint256S("0x4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"));
 
         vFixedSeeds.clear(); //!< Regtest mode doesn't have any fixed seeds.
