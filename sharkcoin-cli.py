@@ -11,14 +11,15 @@ parser.add_argument('--subchain_index', type=int, default=-1, help='subchain ind
 parser.add_argument('--block_hash', default=None, help='block hash')
 parser.add_argument('--verbosity', type=int, default=1, help='0 is hex data, 1 is json')
 parser.add_argument('--nblocks', type=int, default=0, help='number of blocks to generate')
+parser.add_argument('--block_num', type=int, default=0, help='number of block')
 args = parser.parse_args()
 action = args.action
 subchain_index = args.subchain_index
 home_dir = os.environ['HOME']
-'''
+
 process = subprocess.Popen(
         [
-            './src/bitcoin-cli',
+            '{home}/sharkcoin/src/bitcoin-cli'.format(home=home_dir),
             '-regtest',
             '-rpcport=3776',
             '-datadir={home}/.bitcoin/0'.format(home=home_dir),
@@ -28,12 +29,9 @@ process = subprocess.Popen(
 info, err = process.communicate()
 if err:
     sys.exit('could not get number of sub chains: {}'.format(str(err)))
-print('info ----------- {}'.format(info))
 blockchain_info = json.loads(info.decode('utf8'))
-print('blockchain info ------ {}'.format(blockchain_info))
 num_chains = int(blockchain_info['numsubchains'])
-'''
-num_chains = 3
+
 
 chains = [
     {
@@ -115,6 +113,27 @@ elif action == 'getblockchaininfo':
             chains[subchain_index]['rpc_port'],
             chains[subchain_index]['data_dir'],
             chains[subchain_index]['conf'],
+        ))
+
+elif action == 'getblockhash':
+    block_num = args.block_num
+    if not block_num:
+        sys.exit('must specify a block num with getblockhash')
+    if subchain_index == -1:
+        for index, chain in enumerate(chains):
+            print('--- Subchain {} ---'.format(index))
+            os.system('./src/bitcoin-cli -regtest -rpcport={} -datadir={} -conf={} getblockhash {}'.format(
+                chain['rpc_port'],
+                chain['data_dir'],
+                chain['conf'],
+                block_num
+            ))
+    else:
+        os.system('./src/bitcoin-cli -regtest -rpcport={} -datadir={} -conf={} getblockhash {}'.format(
+            chains[subchain_index]['rpc_port'],
+            chains[subchain_index]['data_dir'],
+            chains[subchain_index]['conf'],
+            block_num
         ))
 else:
     sys.exit('unknown action: {}'.format(action))

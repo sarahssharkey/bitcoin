@@ -627,9 +627,11 @@ int64_t GetNextChainRpcPort ()
 
 std::string GetHashPrevNextChainBlock(uint32_t blockNum)
 {
+    int64_t chainIndex = GetChainIndex();
     char cmd[41 + numDigits(blockNum)];
-    sprintf(cmd, "python3 ../sharkcoin-cli.py getblockhash %d", blockNum);
-    std::string hashString = runCommandWithResult(cmd);
+    snprintf(cmd, sizeof(cmd), "python3 ../sharkcoin-cli.py getblockhash --subchain_index %lld --block_num %d", chainIndex+1, blockNum);
+    std::string cmdString = cmd;
+    std::string hashString = runCommandWithResult(cmdString);
     return hashString;
 }
 
@@ -905,16 +907,20 @@ void runCommand(const std::string& strCommand)
         LogPrintf("runCommand error: system(%s) returned %d\n", strCommand, nErr);
 }
 
-std::string runCommandWithResult(const char* cmd) {
-    std::array<char, 128> buffer;
-    std::string result;
-    std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
-    if (!pipe) throw std::runtime_error("popen() failed!");
-    while (!feof(pipe.get())) {
-        if (fgets(buffer.data(), 128, pipe.get()) != nullptr)
-            result += buffer.data();
+std::string runCommandWithResult(std::string cmd) {
+    std::string data;
+    FILE * stream;
+    const int max_buffer = 256;
+    char buffer[max_buffer];
+    cmd.append(" 2>&1");
+
+    stream = popen(cmd.c_str(), "r");
+    if (stream) {
+        while (!feof(stream))
+            if (fgets(buffer, max_buffer, stream) != NULL) data.append(buffer);
+        pclose(stream);
     }
-    return result;
+    return data;
 }
 
 int numDigits(int n) {

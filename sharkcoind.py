@@ -26,8 +26,8 @@ def main():
             'rpc_port': 3776 + i * 2,
         } for i in range(0, num_chains)
     ]
-
-    for chain in chains:
+'''
+    for index, chain in enumerate(chains):
         data_dir = chain['data_dir']
         rpc_port = chain['rpc_port']
         port = rpc_port + 1
@@ -40,9 +40,10 @@ def main():
         f = open('{}/bitcoin.conf'.format(data_dir), 'w+')
         f.write(conf_info)
         f.close()
-        os.system('./src/bitcoind -daemon -regtest -rpcport={} -port={} -datadir={} -conf={}/bitcoin.conf -numChains={}'.format(rpc_port, port, data_dir, data_dir, num_chains))
-
-    time.sleep(4)
+        continue
+        os.system('./src/bitcoind -daemon -regtest -rpcport={} -port={} -datadir={} -conf={}/bitcoin.conf -numChains={} -chainIndex={}'.format(rpc_port, port, data_dir, data_dir, num_chains, index))
+'''
+    #time.sleep(4)
     setup_genesis_and_first_blocks(chains)
 
 

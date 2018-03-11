@@ -195,7 +195,7 @@ fs::path GetDebugLogPath();
 bool OpenDebugLog();
 void ShrinkDebugFile();
 void runCommand(const std::string& strCommand);
-std::string runCommandWithResult(const char* cmd);
+std::string runCommandWithResult(std::string cmd);
 int numDigits(int n);
 
 inline bool IsSwitchChar(char c)

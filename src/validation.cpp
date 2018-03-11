@@ -3231,7 +3231,7 @@ bool CChainState::AcceptBlockHeader(const CBlockHeader& block, CValidationState&
             if (ppindex)
                 *ppindex = pindex;
             if (pindex->nStatus & BLOCK_FAILED_MASK)
-                return state.Invalid(error("%s: block %s is marked invalid", __func__, hash.ToString()), 0, "duplicate");
+                return state.Invalid(error("%s: block %s is marked invalid lolol", __func__, hash.ToString()), 0, "duplicate");
             return true;
         }
 
@@ -3247,13 +3247,18 @@ bool CChainState::AcceptBlockHeader(const CBlockHeader& block, CValidationState&
         // Check hashPrevNextChainBlock
         uint32_t blockNum = block.blockNum;
         int64_t chainIndex = GetChainIndex();
-        int64_t nextChainIndex = (chainIndex + 1) % GetNumChains();
-        int64_t nextChainRpcPort = GetNextChainRpcPort();
-        char cmd[95 + numDigits(nextChainRpcPort) + numDigits(nextChainIndex) + numDigits(blockNum-1)];
-        sprintf(cmd, ".src/bitcoin-cli -regtest -rpcport=%d -datadir=/home/sarahsharkey/.bitcoin/regtest/%d getblockhash %d", nextChainRpcPort, nextChainIndex, blockNum-1);
-        std::string blockHash = runCommandWithResult(cmd);
-        if (blockHash.compare(block.hashPrevNextChainBlock.ToString()) != 0) {
-            return state.Invalid(error("%s: block %s is marked invalid", __func__, hash.ToString()), 0, "invalid hashPrevNextChainBlock");
+        int64_t numChains = GetNumChains();
+        if (numChains > 1)
+        {
+            int64_t nextChainIndex = (chainIndex + 1) % GetNumChains();
+            int64_t nextChainRpcPort = GetNextChainRpcPort();
+            char cmd[95 + numDigits(nextChainRpcPort) + numDigits(nextChainIndex) + numDigits(blockNum-1)];
+            snprintf(cmd, sizeof(cmd), ".src/bitcoin-cli -regtest -rpcport=%d -datadir=/home/sarahsharkey/.bitcoin/regtest/%d getblockhash %d", nextChainRpcPort, nextChainIndex, blockNum-1);
+            std::string cmdString = cmd;
+            std::string blockHash = runCommandWithResult(cmdString);
+            if (blockHash.compare(block.hashPrevNextChainBlock.ToString()) != 0) {
+                return state.Invalid(error("%s: block %s is marked invalid", __func__, hash.ToString()), 0, "invalid hashPrevNextChainBlock");
+            }
         }
 
         pindexPrev = (*mi).second;

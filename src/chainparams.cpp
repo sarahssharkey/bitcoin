@@ -5,7 +5,6 @@
 
 #include <chainparams.h>
 #include <consensus/merkle.h>
-#include <iostream>
 
 #include <tinyformat.h>
 #include <util.h>
@@ -314,14 +313,10 @@ public:
         nDefaultPort = 18444;
         nPruneAfterHeight = 1000;
 
-        genesis = CreateGenesisBlock(1296688602, 2, 0x0, 1, 50 * COIN);
+        genesis = CreateGenesisBlock(1296688602, 11, 0x207fffff, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        std::cout << consensus.hashGenesisBlock.ToString();
-        std::cout << std::endl;
-        std::cout << genesis.hashMerkleRoot.ToString();
-        std::cout << std::endl;
 
-        assert(consensus.hashGenesisBlock == uint256S("0x8d389267e09f2b1ea951598dd950f1e2e91ef9540a97bd2eb8c752b71d975933"));
+        assert(consensus.hashGenesisBlock == uint256S("0x0df50d1d76fca9da011c1c20fb3a852a32d6b23f9f8203d50df610f353c7a477"));
         assert(genesis.hashMerkleRoot == uint256S("0x4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"));
 
         vFixedSeeds.clear(); //!< Regtest mode doesn't have any fixed seeds.
@@ -333,7 +328,7 @@ public:
 
         checkpointData = {
             {
-                {0, uint256S("0x8d389267e09f2b1ea951598dd950f1e2e91ef9540a97bd2eb8c752b71d975933")},
+                {0, uint256S("0x0df50d1d76fca9da011c1c20fb3a852a32d6b23f9f8203d50df610f353c7a477")},
             }
         };
 
