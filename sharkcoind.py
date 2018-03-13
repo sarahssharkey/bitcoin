@@ -26,7 +26,6 @@ def main():
             'rpc_port': 3776 + i * 2,
         } for i in range(0, num_chains)
     ]
-'''
     for index, chain in enumerate(chains):
         data_dir = chain['data_dir']
         rpc_port = chain['rpc_port']
@@ -41,55 +40,8 @@ def main():
         f.write(conf_info)
         f.close()
         continue
+'''
         os.system('./src/bitcoind -daemon -regtest -rpcport={} -port={} -datadir={} -conf={}/bitcoin.conf -numChains={} -chainIndex={}'.format(rpc_port, port, data_dir, data_dir, num_chains, index))
 '''
-    #time.sleep(4)
-    setup_genesis_and_first_blocks(chains)
-
-
-def setup_genesis_and_first_blocks(chains):
-    process = subprocess.Popen(
-        [
-            './src/bitcoin-cli',
-            '-regtest',
-            '-rpcport={}'.format(chains[0]['rpc_port']),
-            '-datadir={}'.format(chains[0]['data_dir']),
-            '-conf={}'.format(chains[0]['conf']),
-            'generate',
-            '1',
-        ], stdout=subprocess.PIPE)
-    blocks, err = process.communicate()
-    if err:
-        sys.exit('could not create genesis: {}'.format(str(err)))
-    block_hash = json.loads(blocks.decode('utf8'))[0]
-    process = subprocess.Popen(
-        [
-            './src/bitcoin-cli',
-            '-regtest',
-            '-rpcport={}'.format(chains[0]['rpc_port']),
-            '-datadir={}'.format(chains[0]['data_dir']),
-            '-conf={}'.format(chains[0]['conf']),
-            'getblock',
-            block_hash,
-            '0',
-        ], stdout=subprocess.PIPE)
-    hex_data, err = process.communicate()
-    if err:
-        sys.exit('could not get genesis hex data: {}'.format(str(err)))
-    hex_data = hex_data.decode('utf8')
-    for chain in chains[1:]:
-        os.system('./src/bitcoin-cli -regtest -rpcport={} -datadir={} -conf={} submitblock {}'.format(
-            chain['rpc_port'],
-            chain['data_dir'],
-            chain['conf'],
-            hex_data
-        ))
-    for chain in chains:
-        os.system('./src/bitcoin-cli -regtest -rpcport={} -datadir={} -conf={} generate 1'.format(
-            chain['rpc_port'],
-            chain['data_dir'],
-            chain['conf'],
-        ))
-        
 
 main()

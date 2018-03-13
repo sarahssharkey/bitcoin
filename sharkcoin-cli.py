@@ -63,6 +63,7 @@ elif action == 'getblock':
         block_hash,
         args.verbosity
     ))
+    print("\n")
 
 elif action == 'getblockheader':
     if subchain_index == -1:
@@ -76,6 +77,7 @@ elif action == 'getblockheader':
         chains[subchain_index]['conf'],
         block_hash,
     ))
+    print("\n")
 
 elif action == 'generate':
     nblocks = args.nblocks
@@ -98,6 +100,7 @@ elif action == 'generate':
             chains[subchain_index]['conf'],
             nblocks
         ))
+    print("\n")
 
 elif action == 'getblockchaininfo':
     if subchain_index == -1:
@@ -114,10 +117,11 @@ elif action == 'getblockchaininfo':
             chains[subchain_index]['data_dir'],
             chains[subchain_index]['conf'],
         ))
+    print("\n")
 
 elif action == 'getblockhash':
     block_num = args.block_num
-    if not block_num:
+    if block_num is None:
         sys.exit('must specify a block num with getblockhash')
     if subchain_index == -1:
         for index, chain in enumerate(chains):
@@ -135,5 +139,6 @@ elif action == 'getblockhash':
             chains[subchain_index]['conf'],
             block_num
         ))
+    print("\n")
 else:
     sys.exit('unknown action: {}'.format(action))

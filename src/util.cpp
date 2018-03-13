@@ -17,6 +17,7 @@
 #include <stdexcept>
 #include <array>
 
+
 #if (defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__DragonFly__))
 #include <pthread.h>
 #include <pthread_np.h>
@@ -628,8 +629,21 @@ int64_t GetNextChainRpcPort ()
 std::string GetHashPrevNextChainBlock(uint32_t blockNum)
 {
     int64_t chainIndex = GetChainIndex();
-    char cmd[41 + numDigits(blockNum)];
-    snprintf(cmd, sizeof(cmd), "python3 ../sharkcoin-cli.py getblockhash --subchain_index %lld --block_num %d", chainIndex+1, blockNum);
+    int64_t numChains = GetNumChains();
+    if (chainIndex == numChains - 1) {
+        blockNum++;
+    }
+    int64_t rpcPort = GetNextChainRpcPort();
+    //std::string home = getenv("HOME");
+    std::string home = "/home/sarahsharkey";
+    char path[150];
+    snprintf(path, sizeof(path), "%s/.bitcoin/%d", home.c_str(), (chainIndex+1)%numChains);
+    std::string dataDir = path;
+    std::string conf;
+    conf.assign(dataDir);
+    conf.append("/bitcoin.conf");
+    char cmd[70 + numDigits(blockNum) + dataDir.length() + conf.length()];
+    snprintf(cmd, sizeof(cmd), "./bitcoin-cli -regtest -rpcport=%d -datadir=%s -conf=%s getblockhash %d", rpcPort, dataDir.c_str(), conf.c_str(), blockNum);
     std::string cmdString = cmd;
     std::string hashString = runCommandWithResult(cmdString);
     return hashString;
@@ -912,7 +926,6 @@ std::string runCommandWithResult(std::string cmd) {
     FILE * stream;
     const int max_buffer = 256;
     char buffer[max_buffer];
-    cmd.append(" 2>&1");
 
     stream = popen(cmd.c_str(), "r");
     if (stream) {

@@ -175,7 +175,7 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     pblock->hashPrevBlock  = pindexPrev->GetBlockHash();
     uint256 x;
     std::string xs = GetHashPrevNextChainBlock(pblock->blockNum);
-    std::cout << xs << std::endl;
+    xs.erase(std::remove(xs.begin(), xs.end(), '\n'), xs.end());
     x.SetHex(xs);
     pblock->hashPrevNextChainBlock = x;
     pblock->blockNum = pindexPrev->blockNum + 1;
