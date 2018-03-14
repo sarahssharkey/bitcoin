@@ -3261,6 +3261,10 @@ bool CChainState::AcceptBlockHeader(const CBlockHeader& block, CValidationState&
             std::string cmdString = cmd;
             std::string blockHash = runCommandWithResult(cmdString);
             blockHash.erase(std::remove(blockHash.begin(), blockHash.end(), '\n'), blockHash.end());
+            if (blockHash.compare("") == 0)
+            {
+                return state.Invalid(error("%s: chain %d not ready to be mined on", __func__, chainIndex), 0, "invalid hashPrevNextChainBlock");
+            }
             if (blockHash.compare(block.hashPrevNextChainBlock.ToString()) != 0) {
                 return state.Invalid(error("%s: block %s is marked invalid", __func__, hash.ToString()), 0, "invalid hashPrevNextChainBlock");
             }
