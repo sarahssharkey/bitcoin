@@ -48,7 +48,7 @@ BasicTestingSetup::BasicTestingSetup(const std::string& chainName)
         InitScriptExecutionCache();
         fPrintToDebugLog = false; // don't want to write to debug.log file
         fCheckBlockIndex = true;
-        SelectParams(chainName);
+        SelectParams(CBaseChainParams::REGTEST);
         noui_connect();
 }
 
